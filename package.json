@@ -1,0 +1,21 @@
+{
+  "name": "codeas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "codeas": "./dist/codeas.js"
+  },
+  "scripts": {
+    "test": "tsx --test test/**/*.test.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

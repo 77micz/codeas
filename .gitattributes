@@ -1,0 +1,3 @@
+
+# 仓库里统一用 LF 存储，Windows 开发者检出时自动转成 CRLF，Linux/macOS 开发者检出时保持 LF
+* text=auto
