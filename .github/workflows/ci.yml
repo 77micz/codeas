@@ -18,15 +18,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'            # 自动缓存 node_modules，加速后续 CI
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Type check
+        run: npm run typecheck
+
       - name: Build project
-        run: npm run build --if-present
+        run: npm run build
 
       - name: Run tests
-        run: |
-          shopt -s globstar
-          npm test
+        run: npm test
