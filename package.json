@@ -7,7 +7,7 @@
     "codeas": "./dist/codeas.js"
   },
   "scripts": {
-    "test": "tsx --test \"test/**/*.test.ts\""
+    "test": "tsx --test test/**/*.test.ts"
   },
   "keywords": [],
   "author": "",
