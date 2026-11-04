@@ -8,7 +8,9 @@
  * 
  */
 // ======================= 导入 =======================
-import { command_dict } from '../data/for_cli.js'
+import { commandDict } from '../data/for_cli.js'
+// 导入解析器
+import { argsParser } from '../util/utils.js'
 
 
 
@@ -17,7 +19,7 @@ import { command_dict } from '../data/for_cli.js'
 
 // 命令结果类型
 type CommandResult = {
-    exit_code: number
+    exitCode: number
     stdout: string
     stderr: string
 }
@@ -38,7 +40,7 @@ const ERROR_TYPE = ['Options error', 'Unknown command', 'Usage error']
  * @param string[] arg_vec 命令行参数数组
  * @returns CommandResult 命令执行结果
  */
-export function run(arg_vec: string[]): CommandResult {
+export async function run(arg_vec: string[]): Promise<CommandResult> {
 
     // 检查参数是否是数组
     if (!Array.isArray(arg_vec)) {
@@ -47,7 +49,7 @@ export function run(arg_vec: string[]): CommandResult {
 
     // 检查数组是否有值
     if (arg_vec.length === 0) {
-        return { exit_code: 2, stdout: '', stderr: 'missing command: arg_vec must not be empty' }
+        return { exitCode: 2, stdout: '', stderr: 'missing command: arg_vec must not be empty' }
     }
 
     // 拆分命令行参数数组，将第一个参数作为命令名，其他参数作为命令参数
@@ -56,25 +58,28 @@ export function run(arg_vec: string[]): CommandResult {
 
     // 检查命令是否为空字符串
     if (!command) {
-        return { exit_code: 2, stdout: '', stderr: 'Unknow command: Command must not be empty' }
+        return { exitCode: 2, stdout: '', stderr: 'Unknow command: Command must not be empty' }
     }
 
     // 检查命令是否存在
-    if (!(command in command_dict)) {
-        return { exit_code: 2, stdout: '', stderr: `Unknow command: ${command}` }
+    if (!(command in commandDict)) {
+        return { exitCode: 2, stdout: '', stderr: `Unknow command: ${command}` }
     }
 
     // 调用命令函数
-    const func = command_dict[command]
+    const func = commandDict[command]
 
     // 检查命令函数是否存在
     if (!func) {
         throw new Error(`Command function for command: '${command}' is not defined`)
     }
 
+    // 解析命令行参数
+    const parsed_args = argsParser(options, command)
+
     try {
-        const result = func(...options)
-        return { exit_code: 0, stdout: result, stderr: '' }
+        const result = await func(parsed_args)
+        return { exitCode: 0, stdout: result, stderr: '' }
     } catch (error: any) {
         // 检查error类型
         const err_msg = error instanceof Error ? error.message : String(error)
@@ -87,9 +92,9 @@ export function run(arg_vec: string[]): CommandResult {
             }
         }
         if (flag) {
-            return { exit_code: 2, stdout: '', stderr: err_msg }
+            return { exitCode: 2, stdout: '', stderr: err_msg }
         } else {
-            return { exit_code: 1, stdout: '', stderr: err_msg }
+            return { exitCode: 1, stdout: '', stderr: err_msg }
         }
     }
 

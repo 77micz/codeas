@@ -16,12 +16,14 @@
     // "types": ["node"],
     // and npm install -D @types/node
     // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+    "noEmitOnError": true, // 不在有错误时生成输出文件
+    "sourceMap": true, // 生成源映射文件
+    "declaration": true, // 生成类型声明文件
+    "declarationMap": true, // 生成类型声明映射文件
     // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
+    "strict": true, // 严格模式检查
+    "noUncheckedIndexedAccess": true, // 不允许未检查的索引访问
+    "exactOptionalPropertyTypes": true, // 严格检查可选属性与值为undefined的区别
     // Style Options
     // "noImplicitReturns": true,
     // "noImplicitOverride": true,
@@ -30,7 +32,6 @@
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true,
     // Recommended Options
-    "strict": true,
     "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,

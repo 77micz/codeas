@@ -38,22 +38,22 @@ after(() => {
     rmSync(tempDir, { recursive: true, force: true });
 });
 
-// ---------- 基础命令：help 和 version ----------
+// ---------- 集成测试 ----------
 
-test('help prints usage and exits 0', () => {
-    const result = run(['help']);
+test('help prints usage and exits 0', async () => {
+    const result = await run(['--help']);
 
-    assert.equal(result.exit_code, 0);
+    assert.equal(result.exitCode, 0);
     assert.match(result.stdout, /Usage:/);
     assert.match(result.stdout, /version/);
     assert.equal(result.stderr, '');
 });
 
-test('version prints the package version', () => {
-    const result = run(['version']);
+test('version prints the package version', async () => {
+    const result = await run(['--version']);
     const packageJson = JSON.parse(readFileSync(packagePath, 'utf8'));
 
-    assert.equal(result.exit_code, 0);
+    assert.equal(result.exitCode, 0);
     assert.equal(result.stdout, `codeas version ${packageJson.version}\n`);
     assert.equal(VERSION, packageJson.version);
 });
@@ -61,21 +61,63 @@ test('version prints the package version', () => {
 
 
 
-// ---------- 其他全局错误 ----------
+test('test unknow command', async () => {
+    const result = await run(['tree']);
 
-test('no arguments exits with code 2', () => {
-    const result = run([]);
+    assert.equal(result.exitCode, 2);
+    assert.match(result.stderr, /Unknow command: tree/);
+    assert.equal(result.stdout, '');
+});
 
-    assert.equal(result.exit_code, 2);
+
+
+
+
+
+test('no arguments exits with code 2', async () => {
+    const result = await run([]);
+
+    assert.equal(result.exitCode, 2);
     assert.match(result.stderr, /missing command/);
 });
 
-// ---------- 真正的可执行入口 ----------
+
+
+
+test('stat the project directory', async () => {
+    const result = await run(['stat', './']);
+
+    assert.equal(result.exitCode, 0);
+    // 转为对象
+    const stats = JSON.parse(result.stdout);
+    assert.ok(stats);
+    assert.equal(result.stderr, '');
+});
+
+
+
+
+
+
+// ---------- 真正的可执行入口 端到端测试 ----------
 
 // 前面的测试直接调用 run()；这里启动一个真正的 Node 进程，
-// 验证 bin/devpilot.js 这层包装也能正确传参、输出和设置退出码。
-test('the executable wrapper forwards output and exit codes', () => {
-    const result = spawnSync(process.execPath, [binPath, 'version'], {
+// 验证 src/codeas.ts 这层包装也能正确传参、输出和设置退出码。
+
+
+test('show help with the executable wrapper', () => {
+    const result = spawnSync(process.execPath, [binPath, '--help'], {
+        encoding: 'utf8',
+    });
+
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /Usage:/);
+    assert.equal(result.stderr, '');
+});
+
+
+test('show version with the executable wrapper', () => {
+    const result = spawnSync(process.execPath, [binPath, '--version'], {
         encoding: 'utf8',
     });
 
@@ -85,11 +127,24 @@ test('the executable wrapper forwards output and exit codes', () => {
 });
 
 test('the executable wrapper reports usage errors without a stack trace', () => {
-    const result = spawnSync(process.execPath, [binPath, 'analyze'], {
+    const result = spawnSync(process.execPath, [binPath, 'tree'], {
         encoding: 'utf8',
     });
 
     assert.equal(result.status, 2);
-    assert.match(result.stderr, /Unknow command: analyze/);
+    assert.match(result.stderr, /Unknow command: tree/);
     assert.doesNotMatch(result.stderr, /at .*\.js:\d+/);
+});
+
+
+test('stat the project directory with the executable wrapper', () => {
+    const result = spawnSync(process.execPath, [binPath, 'stat', './'], {
+        encoding: 'utf8',
+    });
+
+    assert.equal(result.status, 0);
+    // 转为对象
+    const stats = JSON.parse(result.stdout);
+    assert.ok(stats);
+    assert.equal(result.stderr, '');
 });
