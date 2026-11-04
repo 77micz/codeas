@@ -22,7 +22,7 @@ import { run } from './bin/cli.js'
 // ========================= 主函数 =========================
 try {
     // 运行命令，并解析返回值
-    const result = run(process.argv.slice(2)) // 获取终端输入的命令行参数数组，跳过前两个参数，即nodejs路径和脚本路径
+    const result = await run(process.argv.slice(2)) // 获取终端输入的命令行参数数组，跳过前两个参数，即nodejs路径和脚本路径
 
 
     // 检查返回值，并输出到终端
@@ -37,7 +37,7 @@ try {
 
 
     // 设置退出码
-    process.exitCode = result.exit_code
+    process.exitCode = result.exitCode
 } catch (error: any) {
     // 获取错误信息
     const err_msg = error instanceof Error ? error.message : String(error)

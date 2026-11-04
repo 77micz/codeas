@@ -22,10 +22,10 @@ npm install -g .
 
 ```bash
 # 查看帮助
-codeas help
+codeas --help
 
 # 查看版本
-codeas version
+codeas --version
 ```
 
 ## 退出码

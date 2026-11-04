@@ -7,8 +7,11 @@
  */
 
 // ======================= 导入所有命令 =======================
-import {version} from '../commands/commands.js'
-import {main_helps} from '../commands/helps.js'
+import { version } from '../commands/commands.js'
+import { mainHelps } from '../commands/helps.js'
+import type { ParseResult } from '../data/parse_result.js'
+import { stat } from '../commands/commands.js'
+
 
 
 
@@ -17,9 +20,11 @@ import {main_helps} from '../commands/helps.js'
 
 // ======================= 全局变量 =======================
 
-export const command_dict: Record<string, (...args: string[]) => string> = {
-    "version": version,
-    "help": main_helps,
+export const commandDict: Record<string, (args: ParseResult) => string | Promise<string>> = {
+    // 全局选项当成子命令处理
+    "--version": version,
+    "--help": mainHelps,
+    "stat": stat,
 }
 
 
