@@ -74,6 +74,46 @@ const version: CommandDefinition = {
 
 
 
+// 目录结构命令定义
+const tree: CommandDefinition = {
+    name: 'tree',
+    description: '递归显示指定目录下的文件结构',
+    options: {
+        "--help": {
+            name: "--help",
+            description: "显示帮助信息",
+            paramNum: 0,
+            type: "string"
+        },
+        "--auto": {
+            name: "--auto",
+            description: "自动忽略.gitignore中包含的文件/目录",
+            paramNum: 0,
+            type: "boolean"
+        },
+        "--depth": {
+            name: "--depth",
+            description: "指定递归深度，默认值为2",
+            paramNum: 1,
+            type: "number"
+        },
+    },
+    args: [
+        {
+            name: "directory",
+            description: "目标目录，可以是相对路径或绝对路径",
+            type: "string",
+            required: true,
+        }
+    ]
+}
+
+
+
+
+
+
+
 // --------------------- 导出给解析器使用的数据模型 ---------------------
 /**
  * 所有命令定义字典
@@ -85,6 +125,7 @@ export const commandDefinitionDict: Record<string, CommandDefinition> = {
     "--help": help,
     "--version": version,
     "stat": stat,
+    "tree": tree,
 }
 
 

@@ -1,4 +1,4 @@
-# Codeas
+# CodeAs
 
 > 一个基于 TypeScript 的 Node.js 命令行工具
 

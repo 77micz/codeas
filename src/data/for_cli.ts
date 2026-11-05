@@ -10,7 +10,7 @@
 import { version } from '../commands/commands.js'
 import { mainHelps } from '../commands/helps.js'
 import type { ParseResult } from '../data/parse_result.js'
-import { stat } from '../commands/commands.js'
+import { stat, tree } from '../commands/commands.js'
 
 
 
@@ -25,6 +25,7 @@ export const commandDict: Record<string, (args: ParseResult) => string | Promise
     "--version": version,
     "--help": mainHelps,
     "stat": stat,
+    "tree": tree,
 }
 
 
