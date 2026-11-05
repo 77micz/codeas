@@ -62,10 +62,10 @@ test('version prints the package version', async () => {
 
 
 test('test unknow command', async () => {
-    const result = await run(['tree']);
+    const result = await run(['unknown-command']);
 
     assert.equal(result.exitCode, 2);
-    assert.match(result.stderr, /Unknow command: tree/);
+    assert.match(result.stderr, /Unknow command: unknown-command/);
     assert.equal(result.stdout, '');
 });
 
@@ -91,6 +91,21 @@ test('stat the project directory', async () => {
     // 转为对象
     const stats = JSON.parse(result.stdout);
     assert.ok(stats);
+    assert.equal(result.stderr, '');
+});
+
+
+
+
+
+test('list tree struct for target directory', async () => {
+    const result = await run(['tree', '--auto', '--depth', '2', './']);
+
+    assert.equal(result.exitCode, 0);
+
+
+    // 检查标准输出是字符串
+    assert.equal(typeof result.stdout, 'string');
     assert.equal(result.stderr, '');
 });
 
@@ -126,13 +141,13 @@ test('show version with the executable wrapper', () => {
     assert.equal(result.stderr, '');
 });
 
-test('the executable wrapper reports usage errors without a stack trace', () => {
-    const result = spawnSync(process.execPath, [binPath, 'tree'], {
+test('test unknow command with the executable wrapper', () => {
+    const result = spawnSync(process.execPath, [binPath, 'unknown-command'], {
         encoding: 'utf8',
     });
 
     assert.equal(result.status, 2);
-    assert.match(result.stderr, /Unknow command: tree/);
+    assert.match(result.stderr, /Unknow command: unknown-command/);
     assert.doesNotMatch(result.stderr, /at .*\.js:\d+/);
 });
 
@@ -148,3 +163,20 @@ test('stat the project directory with the executable wrapper', () => {
     assert.ok(stats);
     assert.equal(result.stderr, '');
 });
+
+
+
+
+test('list the project directory with the executable wrapper', () => {
+    const result = spawnSync(process.execPath, [binPath, 'tree', '--auto', '--depth', '2', './'], {
+        encoding: 'utf8',
+    });
+
+    assert.equal(result.status, 0);
+    // 检查标准输出是字符串
+    assert.equal(typeof result.stdout, 'string');
+    assert.equal(result.stderr, '');
+});
+
+
+

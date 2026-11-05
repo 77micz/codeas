@@ -96,7 +96,7 @@ export function argsParser(args: string[], command: string): ParseResult {
             }
             // 记录上一次的选项
             last_option = arg
-            // 更新选项结果
+            // 初始化选项参数列表
             res[option.name] = []
             // 检查选项是否有参数
             if (option.paramNum > 0) {
