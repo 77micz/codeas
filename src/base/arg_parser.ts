@@ -7,15 +7,24 @@
 
 
 // ======================= 导入 =======================
-import { commandDefinitionDict } from '../data/for_parser.js'
+import { commandDefinitionDict } from '../data_model/definitions_dict.js'
 // 导入解析结果数据结构
-import type { ParseResult } from '../data/parse_result.js'
+import type { ParseResult } from '../data_model/parse_result.js'
 
 
 
 
 // ===================== 全局变量 =====================
 const sourcePath = '../data/for_parser.js'
+
+// 只在帮助信息调用时使用的常量
+const helpResult: ParseResult = {
+    options: {
+        '--help': [],
+    },
+    subArgs: [],
+}
+
 
 
 
@@ -27,17 +36,11 @@ const sourcePath = '../data/for_parser.js'
 
 /**
  * 解析命令行参数数组，提取命令参数对象典对象
- * @param string[] args 命令行参数数组
  * @param string command 子命令名称
+ * @param string[] args 命令行参数数组
  * @returns ParseResult 命令参数解析结果
  */
-export function argsParser(args: string[], command: string): ParseResult {
-    // 检查参数是否为未定义
-    if (!args) {
-        throw new Error(`Args error: no arg.
-            Please use "codeas ${command} --help" to show help page.
-            `)
-    }
+export function argsParser(command: string, args: string[]): ParseResult {
 
     // 返回结果
     const result: ParseResult = {
@@ -94,6 +97,19 @@ export function argsParser(args: string[], command: string): ParseResult {
                     Please use "codeas ${command} --help" to show help page.
                     `)
             }
+
+            // 特殊情况：检查选项是否是--help
+            // 如果是--help，只有在args长度为1时才显示帮助信息
+            if (arg === '--help' && args.length === 1) {
+                // 显示帮助信息
+                return helpResult
+            } else if (arg === '--help') {
+                // 如果是--help，且长度不为1，说明参数传递错误
+                throw new Error(`Usage error: too many option or arg.
+                    Please use "codeas ${command} --help" to show help page.
+                    `)
+            }
+
             // 记录上一次的选项
             last_option = arg
             // 初始化选项参数列表

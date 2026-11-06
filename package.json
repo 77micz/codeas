@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "codeas": "./dist/codeas.js"
+    "codeas": "./dist/main.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
