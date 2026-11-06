@@ -27,7 +27,7 @@ import { VERSION } from '../src/data_model/constant.js';
 const tempDir = mkdtempSync(join(tmpdir(), 'codeas-test-'));
 const projectDir = join(tempDir, 'project');
 const filePath = join(tempDir, 'notes.txt');
-const binPath = fileURLToPath(new URL('../dist/codeas.js', import.meta.url));
+const binPath = fileURLToPath(new URL('../dist/main.js', import.meta.url));
 const packagePath = fileURLToPath(new URL('../package.json', import.meta.url));
 
 mkdirSync(projectDir);
