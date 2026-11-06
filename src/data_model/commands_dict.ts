@@ -3,13 +3,13 @@
 
 
 /**
- * 收集所有命令，提供给cli调用
+ * 收集所有命令，提供给executor调用
  */
 
 // ======================= 导入所有命令 =======================
 import { version } from '../commands/commands.js'
 import { mainHelps } from '../commands/helps.js'
-import type { ParseResult } from '../data/parse_result.js'
+import type { ParseResult } from './parse_result.js'
 import { stat, tree } from '../commands/commands.js'
 
 

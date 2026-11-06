@@ -19,15 +19,15 @@ import { after, test } from 'node:test';
 // fileURLToPath 转换 URL 为路径
 import { fileURLToPath } from 'node:url';
 
-import { run } from '../src/bin/cli.js';
-import { VERSION } from '../src/commands/commands.js';
+import { run } from '../src/bin/executor.js';
+import { VERSION } from '../src/data_model/constant.js';
 
 // 每个测试共用一套临时目录和示例文件。
 // mkdtempSync 会创建一个带随机后缀的目录，避免不同测试互相覆盖。
 const tempDir = mkdtempSync(join(tmpdir(), 'codeas-test-'));
 const projectDir = join(tempDir, 'project');
 const filePath = join(tempDir, 'notes.txt');
-const binPath = fileURLToPath(new URL('../dist/codeas.js', import.meta.url));
+const binPath = fileURLToPath(new URL('../dist/main.js', import.meta.url));
 const packagePath = fileURLToPath(new URL('../package.json', import.meta.url));
 
 mkdirSync(projectDir);
@@ -54,7 +54,7 @@ test('version prints the package version', async () => {
     const packageJson = JSON.parse(readFileSync(packagePath, 'utf8'));
 
     assert.equal(result.exitCode, 0);
-    assert.equal(result.stdout, `codeas version ${packageJson.version}\n`);
+    assert.equal(result.stdout, `codeas version ${packageJson.version}`);
     assert.equal(VERSION, packageJson.version);
 });
 
@@ -62,10 +62,10 @@ test('version prints the package version', async () => {
 
 
 test('test unknow command', async () => {
-    const result = await run(['unknown-command']);
+    const result = await run(['unknow-command']);
 
     assert.equal(result.exitCode, 2);
-    assert.match(result.stderr, /Unknow command: unknown-command/);
+    assert.match(result.stderr, /unknow command: unknow-command/);
     assert.equal(result.stdout, '');
 });
 
@@ -78,7 +78,8 @@ test('no arguments exits with code 2', async () => {
     const result = await run([]);
 
     assert.equal(result.exitCode, 2);
-    assert.match(result.stderr, /missing command/);
+    assert.match(result.stderr, /arg_vec must not be empty/);
+    assert.equal(result.stdout, '');
 });
 
 
@@ -137,17 +138,17 @@ test('show version with the executable wrapper', () => {
     });
 
     assert.equal(result.status, 0);
-    assert.equal(result.stdout, `codeas version ${VERSION}\n`);
+    assert.equal(result.stdout, `codeas version ${VERSION}`);
     assert.equal(result.stderr, '');
 });
 
 test('test unknow command with the executable wrapper', () => {
-    const result = spawnSync(process.execPath, [binPath, 'unknown-command'], {
+    const result = spawnSync(process.execPath, [binPath, 'unknow-command'], {
         encoding: 'utf8',
     });
 
     assert.equal(result.status, 2);
-    assert.match(result.stderr, /Unknow command: unknown-command/);
+    assert.match(result.stderr, /unknow command: unknow-command/);
     assert.doesNotMatch(result.stderr, /at .*\.js:\d+/);
 });
 

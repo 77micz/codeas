@@ -7,29 +7,20 @@
 
 
 // ======================= 导入 =======================
-// 导入读取文件，写入文件，创建临时文件的模块
-import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs'
 // 导入参数格式
-import type { ParseResult } from '../data/parse_result.js'
+import type { ParseResult } from '../data_model/parse_result.js'
 // 导入fs模块，用于文件操作
 import fs from 'fs/promises';
 // 导入path模块，用于路径操作
 import path from 'path';
-// tmpdir 获取系统临时目录
-import { tmpdir } from 'node:os';
-// join 拼接路径
-import { join } from 'node:path';
 // 
 import { type Dirent } from 'node:fs';
+// 导入帮助信息字典
+import { helpsDict } from '../data_model/helps_dict.js';
+// 导入版本号
+import { VERSION } from '../data_model/constant.js';
 
 
-
-
-
-
-// ======================= 全局变量 =======================
-// 读取package.json中的version字段
-export const VERSION = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf-8')).version
 
 
 
@@ -44,18 +35,8 @@ export const VERSION = JSON.parse(readFileSync(new URL('../../package.json', imp
  * @returns string 版本号
  */
 export function version(parsed_args: ParseResult): string {
-    // // 判断参数是否为空
-    // if (options.length !== 0) {
-    //     // 把每个参数包裹上单引号
-    //     options = options.map(opt => `'${opt}'`)
-    //     throw new Error(`Options error: unknow option ${options.join(' ')}
-    //     Please use "codeas --help" to show help page.
-    //     `)
-    // }
-
-
     // 完成基础功能,选项作为增强功能
-    return `codeas version ${VERSION}\n`
+    return `codeas version ${VERSION}`
 }
 
 
@@ -66,12 +47,12 @@ export function version(parsed_args: ParseResult): string {
 
 
 /**
- * 扫描当前工作目录，找到.gitignore文件，读取文件内容，处理每一行把目录名称则作为string加入数组返回
+ * 扫描当前工作目录，找到.codeasignore文件，读取文件内容，处理每一行把目录名称则作为string加入数组返回
  * @returns 返回一个 Promise，解析为包含目录名称的数组
  */
-async function scanGitignore(): Promise<string[]> {
+async function scanCodeasignore(): Promise<string[]> {
     // 1. 将相对路径基于当前工作目录 (cwd) 解析为绝对路径
-    const absolutePath = path.resolve(process.cwd(), '.gitignore');
+    const absolutePath = path.resolve(process.cwd(), '.codeasignore');
 
     // 用于收集结果的数组
     const result: string[] = [];
@@ -96,11 +77,8 @@ async function scanGitignore(): Promise<string[]> {
             }
         }
     } catch (error) {
-        // 检查error类型
-        let msg = error instanceof Error ? error.message : 'Unknown error';
-
-        process.stderr.write(`read file error: ${msg}\n`);
-        // 根据业务需求，这里可以选择抛出错误或静默忽略（例如遇到权限问题）
+        let msg = error instanceof Error ? error.message : String(error)
+        throw new Error(msg)
     }
     return result;
 }
@@ -160,10 +138,9 @@ async function countFileTypes(relativePath: string, ignoreDirs: string[] = []): 
             }
         } catch (error) {
             // 检查error类型
-            let msg = error instanceof Error ? error.message : 'Unknown error';
-            process.stderr.write(`read directory error: ${currentDir}\n
-                message: ${msg}\n`);
-            // 根据业务需求，这里可以选择抛出错误或静默忽略（例如遇到权限问题）
+            let msg = error instanceof Error ? error.message : String(error)
+            throw new Error(`file operation error: read ${currentDir} fail.
+                message: ${msg}`);
         }
     }
 
@@ -191,9 +168,19 @@ export async function stat(parsed_args: ParseResult): Promise<string> {
     // ==================== 选项处理 ====================
     const options = parsed_args.options;
 
-    // 1.忽略目录
-    const ignoreDirs = options['--auto'] === undefined ? [] : await scanGitignore();
+    // 1.帮助信息
+    if (Object.keys(options).includes('--help')) {
+        // 获取帮助命令函数
+        const help = helpsDict["stat"];
+        if (help === undefined) {
+            throw new Error("service error: stat command help not found");
+        }
+        return help();
+    }
+    // 2.忽略目录
+    const ignoreDirs = options['--auto'] === undefined ? [] : await scanCodeasignore();
     // process.stdout.write(`当前忽略目录: ${ignoreDirs.join(', ')}\n`);
+
 
 
 
@@ -254,10 +241,11 @@ export async function printTree(
         try {
             // 读取目录内容，withFileTypes: true 可以直接拿到 Dirent 对象，省去 stat 调用
             entries = await fs.readdir(dir, { withFileTypes: true });
-        } catch {
-            // 目录无法读取时直接跳过，也可以改成 throw err
-            throw new Error(`file read error: read ${dir} fail.
-                check permission`)
+        } catch (error) {
+            let msg = error instanceof Error ? error.message : String(error)
+            throw new Error(`file operation error: read ${dir} fail.
+                message: ${msg}
+            `)
         }
 
         // 只忽略目录，不忽略同名文件
@@ -332,15 +320,25 @@ export async function tree(parsed_args: ParseResult): Promise<string> {
     // ==================== 选项处理 ====================
     const options = parsed_args.options;
 
-    // 1.忽略目录
-    const ignoreDirs = options['--auto'] === undefined ? [] : await scanGitignore();
+    // 1.帮助信息
+    if (Object.keys(options).includes('--help')) {
+        // 获取帮助命令函数
+        const help = helpsDict["tree"];
+        if (help === undefined) {
+            throw new Error("service error: tree command help not found");
+        }
+        return help();
+    }
+    // 2.忽略目录
+    const ignoreDirs = options['--auto'] === undefined ? [] : await scanCodeasignore();
     // process.stdout.write(`当前忽略目录: ${ignoreDirs.join(', ')}\n`);
-    // 2.递归深度
+    // 3.递归深度
     const depth = options['--depth'] === undefined ? 2 : Number(options['--depth']);
     // process.stdout.write(`当前递归深度: ${depth}\n`);
     if (isNaN(depth) || depth <= 0 || depth > 10) {
         throw new Error(`Args error: depth must be number between 1 and 10 but depth is ${options['--depth']}`);
     }
+
 
 
 

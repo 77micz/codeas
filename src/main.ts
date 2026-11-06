@@ -3,7 +3,7 @@
 
 /**
  * 
- * cli入口文件，对接终端，输入终端命令，输出命令执行结果到终端，向运行命令函数提供服务
+ * 入口文件，对接终端，输入终端命令，输出命令执行结果到终端，向运行命令函数提供服务
  * 负责连接终端、解析命令行，并调用运行命令函数
  * 约定退出码为0表示成功，非0表示失败
  * 
@@ -13,7 +13,7 @@
 // ========================= 导入 =========================
 
 
-import { run } from './bin/cli.js'
+import { run } from './bin/executor.js'
 
 
 
@@ -42,7 +42,8 @@ try {
     // 获取错误信息
     const err_msg = error instanceof Error ? error.message : String(error)
     // 输出错误信息
-    process.stderr.write(`codeas: '${err_msg}' See 'codeas help'.\n`)
+    process.stderr.write(`unexpected error:
+        '${err_msg}'.`)
 
     // 意外错误属于运行时错误，退出码设为1
     process.exitCode = 1
