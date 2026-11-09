@@ -8,17 +8,17 @@
 
 // ======================= 导入 =======================
 // 导入参数格式
-import type { ParseResult } from '../data_model/parse_result.js'
+import type { ParseResult } from '../interface/parse_result.js'
 // 导入fs模块，用于文件操作
 import fs from 'fs/promises';
 // 导入path模块，用于路径操作
 import path from 'path';
-// 
+// 导入Dirent类型，用于文件操作
 import { type Dirent } from 'node:fs';
-// 导入帮助信息字典
-import { helpsDict } from '../data_model/helps_dict.js';
+// 获取命令帮助字典
+import { helpsDict } from '../commands/helps.js';
 // 导入版本号
-import { VERSION } from '../data_model/constant.js';
+import { VERSION } from '../common/constant.js';
 
 
 
@@ -29,6 +29,41 @@ import { VERSION } from '../data_model/constant.js';
 
 
 // ======================= 函数 =======================
+
+
+
+/**
+ * cli工具的帮助信息
+ * @param ParseResult parsed_args 命令参数解析结果
+ * @returns string 帮助信息
+ */
+export function mainHelps(parsed_args: ParseResult): string {
+
+    // 完成基础功能,选项作为增强功能
+    return `codeas ${VERSION} - project analysis from the command line
+
+Usage:
+  codeas <command> [options] [args]
+
+Commands:
+  --help      Show this page
+  --version   Show version for codeas
+  stat     Stat number of files of different types in the project directory
+  tree     Show tree struct of the project directory
+
+Examples:
+  codeas --help
+  codeas --version
+  codeas stat --auto ./
+  codeas tree --auto --depth 2 ./
+`
+}
+
+
+
+
+
+
 /**
  * 版本命令函数
  * @param ParseResult parsed_args 命令参数解析结果

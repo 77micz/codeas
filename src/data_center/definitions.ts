@@ -9,7 +9,7 @@
 
 // ======================= 导入 =======================
 // 导入命令定义
-import type { CommandDefinition } from './command_definition.js'
+import type { CommandDefinition } from '../interface/command_definition.js'
 
 
 
@@ -18,8 +18,34 @@ import type { CommandDefinition } from './command_definition.js'
 // 所有命令定义
 
 
+
+// 帮助命令定义
+export const help: CommandDefinition = {
+    name: '--help',
+    description: '显示帮助信息',
+    options: {
+    },
+    args: [
+    ]
+}
+
+
+// 版本命令定义
+export const version: CommandDefinition = {
+    name: '--version',
+    description: '显示版本号',
+    options: {
+    },
+    args: [
+    ]
+}
+
+
+
+
+
 // 统计命令定义
-const stat: CommandDefinition = {
+export const stat: CommandDefinition = {
     name: 'stat',
     description: '递归统计指定目录下不同文件类型数量',
     options: {
@@ -48,34 +74,11 @@ const stat: CommandDefinition = {
 
 
 
-// 帮助命令定义
-const help: CommandDefinition = {
-    name: '--help',
-    description: '显示帮助信息',
-    options: {
-    },
-    args: [
-    ]
-}
-
-
-// 版本命令定义
-const version: CommandDefinition = {
-    name: '--version',
-    description: '显示版本号',
-    options: {
-    },
-    args: [
-    ]
-}
-
-
-
 
 
 
 // 目录结构命令定义
-const tree: CommandDefinition = {
+export const tree: CommandDefinition = {
     name: 'tree',
     description: '递归显示指定目录下的文件结构',
     options: {
@@ -114,19 +117,7 @@ const tree: CommandDefinition = {
 
 
 
-// --------------------- 导出给解析器使用的数据模型 ---------------------
-/**
- * 所有命令定义字典
- * 结构：
- * key=命令名称
- * value=命令定义对象
- */
-export const commandDefinitionDict: Record<string, CommandDefinition> = {
-    "--help": help,
-    "--version": version,
-    "stat": stat,
-    "tree": tree,
-}
+
 
 
 
