@@ -7,9 +7,15 @@
 
 
 // ======================= 导入 =======================
-import { commandDefinitionDict } from '../data_model/definitions_dict.js'
+// 导入标准命令字典
+import { StdCommandDict } from '../data_center/std_command_dict.js'
 // 导入解析结果数据结构
-import type { ParseResult } from '../data_model/parse_result.js'
+import type { ParseResult } from '../interface/parse_result.js'
+// 导入帮助信息常量
+import { CallHelp } from '../common/constant.js'
+
+
+
 
 
 
@@ -17,13 +23,20 @@ import type { ParseResult } from '../data_model/parse_result.js'
 // ===================== 全局变量 =====================
 const sourcePath = '../data/for_parser.js'
 
-// 只在帮助信息调用时使用的常量
-const helpResult: ParseResult = {
-    options: {
-        '--help': [],
-    },
-    subArgs: [],
-}
+
+
+
+
+
+// 转为命令定义字典
+const commandDefinitionDict = StdCommandDict === undefined
+    ? {}
+    : Object.fromEntries(
+        Object.entries(StdCommandDict).map(([key, item]) => [
+            key,
+            item.definition // 这里替换为你想要的属性
+        ])
+    );
 
 
 
@@ -102,7 +115,7 @@ export function argsParser(command: string, args: string[]): ParseResult {
             // 如果是--help，只有在args长度为1时才显示帮助信息
             if (arg === '--help' && args.length === 1) {
                 // 显示帮助信息
-                return helpResult
+                return CallHelp
             } else if (arg === '--help') {
                 // 如果是--help，且长度不为1，说明参数传递错误
                 throw new Error(`Usage error: too many option or arg.

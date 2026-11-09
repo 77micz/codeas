@@ -20,7 +20,7 @@ import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { run } from '../src/bin/executor.js';
-import { VERSION } from '../src/data_model/constant.js';
+import { VERSION } from '../src/common/constant.js';
 
 // 每个测试共用一套临时目录和示例文件。
 // mkdtempSync 会创建一个带随机后缀的目录，避免不同测试互相覆盖。

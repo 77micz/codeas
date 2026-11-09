@@ -7,41 +7,14 @@
 
 
 // ======================= 导入 =======================
-import { VERSION } from '../data_model/constant.js'
+import { VERSION } from '../common/constant.js'
 // 导入参数格式
-import type { ParseResult } from '../data_model/parse_result.js'
+import type { ParseResult } from '../interface/parse_result.js'
 
 
 
 
 // ======================= 函数 =======================
-
-/**
- * cli工具的帮助信息
- * @param ParseResult parsed_args 命令参数解析结果
- * @returns string 帮助信息
- */
-export function mainHelps(parsed_args: ParseResult): string {
-
-  // 完成基础功能,选项作为增强功能
-  return `codeas ${VERSION} - project analysis from the command line
-
-Usage:
-  codeas <command> [options] [args]
-
-Commands:
-  --help      Show this page
-  --version   Show version for codeas
-  stat     Stat number of files of different types in the project directory
-  tree     Show tree struct of the project directory
-
-Examples:
-  codeas --help
-  codeas --version
-  codeas stat --auto ./
-  codeas tree --auto --depth 2 ./
-`
-}
 
 
 
@@ -100,6 +73,17 @@ Examples:
   codeas tree --auto ./
   codeas tree --auto --depth 2 ./
 `
+}
+
+
+
+
+
+// ======================= 全局变量 =======================
+// 命令帮助字典
+export const helpsDict: Record<string, () => string> = {
+  stat: statHelps,
+  tree: treeHelps,
 }
 
 

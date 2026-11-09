@@ -9,13 +9,31 @@
  * 用户端错误：用户在使用服务过程中出现的错误，例如命令不存在、选项错误、参数错误等
  */
 // ======================= 导入 =======================
-import { commandDict } from '../data_model/commands_dict.js'
+// 导入标准命令字典
+import { StdCommandDict } from '../data_center/std_command_dict.js'
 // 导入解析器
 import { argsParser } from '../base/arg_parser.js'
 // 导入程序运行结果类型
-import type { ProcessResult } from '../data_model/process_result.js'
+import type { ProcessResult } from '../interface/process_result.js'
 // 导入异常类型
 import { CLIENT_ERROR } from '../exception/exceptions.js'
+
+
+
+
+
+
+
+// ======================== 全局变量 ========================
+// 转为命令函数字典
+const commandDict = StdCommandDict === undefined
+    ? {}
+    : Object.fromEntries(
+        Object.entries(StdCommandDict).map(([key, item]) => [
+            key,
+            item.command // 这里替换为你想要的属性
+        ])
+    );
 
 
 
