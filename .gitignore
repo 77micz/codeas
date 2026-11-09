@@ -8,3 +8,7 @@ node_modules/
 dist/
 
 
+# 忽略.vscode目录
+.vscode/
+
+
